@@ -76,8 +76,9 @@ module.exports = {
 
         // Write index to disk
         "finish": function() {
-            if (this.options.generator != 'website') return;
-            if (searchLanguages.isSkip) return;
+            this.log.warn.ln('[search-languages] skipping some checks');
+            // if (this.options.generator != 'website') return;
+            // if (searchLanguages.isSkip) return;
             fs.writeFileSync(
                 path.join(this.options.output, "search_index.lang.json"),
                 JSON.stringify(searchIndex)
