@@ -5,7 +5,8 @@ var _ = require('lodash');
 var $ = require('cheerio');
 
 var supportLangs = ['da', 'de', 'du', 'es', 'fi', 'fr', 'hu', 'it', 'jp', 'no', 'pt', 'ro', 'ru', 'sv', 'tr'];
-var searchLanguages = {}
+var searchLanguages = {};
+var searchIndex = {};
 
 module.exports = {
     book: {
@@ -42,7 +43,7 @@ module.exports = {
             require('lunr-languages/lunr.stemmer.support')(lunr);
             require('lunr-languages/lunr.' + lang)(lunr);
             // Create search index
-            this.book.context.searchIndex = lunr(function () {
+            searchIndex = lunr(function () {
                 this.ref('url');
                 this.use(lunr[lang]);
                 this.field('title', { boost: 10 });
@@ -63,7 +64,7 @@ module.exports = {
             var text = $('<p>' + html.replace(/(<([^>]+)>)/ig, '') + '</p>').text();
             
             // Add to index
-            this.book.context.searchIndex.add({
+            searchIndex.add({
                 url: this.contentLink(page.path),
                 title: $('<p>' + page.progress.current.title + '</p>').text(),
                 body: text
@@ -79,7 +80,7 @@ module.exports = {
             if (searchLanguages.isSkip) return;
             fs.writeFileSync(
                 path.join(this.options.output, "search_index.lang.json"),
-                JSON.stringify(this.book.context.searchIndex)
+                JSON.stringify(searchIndex)
             );
         }
     }
