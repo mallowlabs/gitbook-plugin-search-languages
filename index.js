@@ -29,9 +29,9 @@ module.exports = {
             var lang;
             var isSkip;
             if (this.options.generator != 'website') return;
-            this.context.searchLanguages = {};
-            this.context.searchLanguages.lang = lang = this.config.options.pluginsConfig.search_languages.lang;
-            this.context.searchLanguages.isSkip 
+            this.book.context.searchLanguages = {};
+            this.book.context.searchLanguages.lang = lang = this.config.options.pluginsConfig.search_languages.lang;
+            this.book.context.searchLanguages.isSkip 
                 = isSkip = (!lang || lang === 'en' || !_.any(supportLangs, function(lng) { return lng === lang }));  
             if (isSkip) {
                 this.log.warn.ln('[search-languages] not support language : ' + lang);
@@ -41,7 +41,7 @@ module.exports = {
             require('lunr-languages/lunr.stemmer.support')(lunr);
             require('lunr-languages/lunr.' + lang)(lunr);
             // Create search index
-            this.context.searchIndex = lunr(function () {
+            this.book.context.searchIndex = lunr(function () {
                 this.ref('url');
                 this.use(lunr[lang]);
                 this.field('title', { boost: 10 });
@@ -51,9 +51,9 @@ module.exports = {
         // Index each page
         "page": function(page) {
             if (this.options.generator != 'website') return page;
-            if (this.context.searchLanguages.isSkip) return page;
+            if (this.book.context.searchLanguages.isSkip) return page;
 
-            var lang = this.context.searchLanguages.lang;
+            var lang = this.book.context.searchLanguages.lang;
             // if (_.any(supportLangs, function(lng) { return lng === lang })) {
             // Extract HTML
             var html = _.pluck(page.sections, 'content').join(' ');
@@ -62,7 +62,7 @@ module.exports = {
             var text = $('<p>' + html.replace(/(<([^>]+)>)/ig, '') + '</p>').text();
             
             // Add to index
-            this.context.searchIndex.add({
+            this.book.context.searchIndex.add({
                 url: this.contentLink(page.path),
                 title: $('<p>' + page.progress.current.title + '</p>').text(),
                 body: text
@@ -75,10 +75,10 @@ module.exports = {
         // Write index to disk
         "finish": function() {
             if (this.options.generator != 'website') return;
-            if (this.context.searchLanguages.isSkip) return;
+            if (this.book.context.searchLanguages.isSkip) return;
             fs.writeFileSync(
                 path.join(this.options.output, "search_index.lang.json"),
-                JSON.stringify(this.context.searchIndex)
+                JSON.stringify(this.book.context.searchIndex)
             );
         }
     }
