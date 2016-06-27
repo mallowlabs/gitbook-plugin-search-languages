@@ -5,6 +5,7 @@ var _ = require('lodash');
 var $ = require('cheerio');
 
 var supportLangs = ['da', 'de', 'du', 'es', 'fi', 'fr', 'hu', 'it', 'jp', 'no', 'pt', 'ro', 'ru', 'sv', 'tr'];
+var searchLanguages = {}
 
 module.exports = {
     book: {
@@ -12,8 +13,8 @@ module.exports = {
         html: {
             "body:end": function(page) {
                 if (this.book.options.generator != 'website') return;
-                if (this.book.context.searchLanguages.isSkip) return;
-                var lang = this.book.context.searchLanguages.lang;
+                if (searchLanguages.isSkip) return;
+                var lang = searchLanguages.lang;
                 var bodyEnd = [
                     '<script src="'+ page.staticBase + '/plugins/gitbook-plugin-search-languages/lunr.stemmer.support.js"></script>',
                     '<script src="'+ page.staticBase + '/plugins/gitbook-plugin-search-languages/lunr.' + lang + '.js"></script>',
@@ -29,9 +30,9 @@ module.exports = {
             var lang;
             var isSkip;
             if (this.options.generator != 'website') return;
-            this.book.context.searchLanguages = {};
-            this.book.context.searchLanguages.lang = lang = this.config.options.pluginsConfig.search_languages.lang;
-            this.book.context.searchLanguages.isSkip 
+            searchLanguages = {};
+            searchLanguages.lang = lang = this.config.options.pluginsConfig.search_languages.lang;
+            searchLanguages.isSkip 
                 = isSkip = (!lang || lang === 'en' || !_.any(supportLangs, function(lng) { return lng === lang }));  
             if (isSkip) {
                 this.log.warn.ln('[search-languages] not support language : ' + lang);
@@ -51,9 +52,9 @@ module.exports = {
         // Index each page
         "page": function(page) {
             if (this.options.generator != 'website') return page;
-            if (this.book.context.searchLanguages.isSkip) return page;
+            if (searchLanguages.isSkip) return page;
 
-            var lang = this.book.context.searchLanguages.lang;
+            var lang = searchLanguages.lang;
             // if (_.any(supportLangs, function(lng) { return lng === lang })) {
             // Extract HTML
             var html = _.pluck(page.sections, 'content').join(' ');
@@ -75,7 +76,7 @@ module.exports = {
         // Write index to disk
         "finish": function() {
             if (this.options.generator != 'website') return;
-            if (this.book.context.searchLanguages.isSkip) return;
+            if (searchLanguages.isSkip) return;
             fs.writeFileSync(
                 path.join(this.options.output, "search_index.lang.json"),
                 JSON.stringify(this.book.context.searchIndex)
