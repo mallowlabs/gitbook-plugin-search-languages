@@ -4,7 +4,7 @@
   "main": "index.js",
   "version": "0.0.1",
   "engines": {
-    "gitbook": ">=2.5.0"
+    "gitbook": ">=3.1.1"
   },
   "homepage": "https://github.com/yoshidax/gitbook-plugin-search-languages#readme",
   "repository": {

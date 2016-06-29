@@ -6,10 +6,10 @@ this plugin will replace keyword search in gitbook to your language.
 
 ## description
 
-lunr.js is used for a key word search in gitbook.   
-but tokenizer and stemmer of lunr.js is default setting.   
-That means that it's only English setting.   
-this plugin will replace keyword search in gitbook to your language.   
+lunr.js is used for a key word search in gitbook.
+but tokenizer and stemmer of lunr.js is default setting.
+That means that it's only English setting.
+this plugin will replace keyword search in gitbook to your language.
 This plug-in uses [lunr-languages](https://github.com/MihaiValentin/lunr-languages) in tokenizer and stemmer.
 
 lunr-languages is supporting following languages.
@@ -41,7 +41,7 @@ Add it to your `book.json` configuration:
 ```json
 {
 	...
-    "plugins": ["search-languages"],
+    "plugins": ["search","lunr","search-languages"],
 	...
     "pluginsConfig": {
         "search_languages": {
