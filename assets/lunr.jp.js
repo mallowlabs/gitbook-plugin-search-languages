@@ -233,6 +233,7 @@
     lunr.jp = function() {
       this.pipeline.reset();
       this.pipeline.add(
+        lunr.jp.trimmer,
         lunr.jp.stopWordFilter,
         lunr.jp.stemmer
       );
@@ -240,6 +241,12 @@
       lunr.tokenizer = lunr.jp.tokenizer;
     };
     var segmenter = new TinySegmenter();  // インスタンス生成
+
+    lunr.jp.trimmer = function(s) {
+        var result = s.replace(/(^[,.、。\s]+|[,.、。\s]+$)/, '')
+        return result === '' ? undefined : result
+    }
+    lunr.Pipeline.registerFunction(lunr.jp.trimmer, 'trimmer-jp')
 
     lunr.jp.tokenizer = function (obj) {
         if (!arguments.length || obj == null || obj == undefined) return []
@@ -269,7 +276,7 @@
       
       /* TODO japanese stemmer  */
       return function(word) {
-        return word;
+        return word.toLowerCase();
       }
     })();
 

@@ -29,8 +29,8 @@ module.exports = {
                 return;
             }
 
-            require('lunr-languages/lunr.stemmer.support')(lunr);
-            require('lunr-languages/lunr.' + lang)(lunr);
+            require('./assets/lunr.stemmer.support')(lunr);
+            require('./assets/lunr.' + lang)(lunr);
             // Create search index
             searchIndex = lunr(function () {
                 this.ref('url');
